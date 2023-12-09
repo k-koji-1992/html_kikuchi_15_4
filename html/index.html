@@ -1,17 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>2チャンネル風アプリ</title>
+  <link rel="stylesheet" href="css/style.css">
+
 </head>
 <body>
-    <div>
+<div id="chatContainer">
+
+  <!--  スレ表示スペース-->
+  <div id="thread">
+
+  </div>
+  <!--  /スレ表示スペース-->
+
+  <!-- 書き込みスペース -->
+ 
+        <div>
+            ID:<input type="text" id="uname" >
+        </div>
+        <div>
+            <textarea name="" id="text" cols="30" rows="10"></textarea>
+            <button id="send">投稿</button>
+
+        </div>
+     
+
+</div>
+  
+    
 
 
-        
-    </div>
-
-
+    <!-- /書き込みスペース -->
 
 
 
@@ -39,6 +60,39 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
 
+ // ユーザーIDの新規取得
+
+ // ユーザーIDのローカルストレージへの保存
+
+ // ユーザーIDの再読み込み
+
+ // データベースの参照を作成
+        // RealtimeDBに接続
+        const db = getDatabase(app);
+        // RealtimeDB内の"chat"を使う
+        const dbRef = ref(db, "chat");
+        $("#send").on("click", function () {
+            const msg = {
+                uname: $("#uname").val(),
+                text: $("#text").val()
+
+            };
+            const newPostRef = push(dbRef);
+            // pushできる状態にする
+            set(newPostRef, msg);
+            // DBに値を送信
+
+        });
+        onChildAdded(dbRef, function (data) {
+            const msg = data.val();
+            const key = data.key;
+            let h = "<p>";
+            h += msg.uname;
+            h += "<br>";
+            h += msg.text;
+            h += "</p>";
+            $("#thread").append(h); // #output の最後に追加
+        });
 
 
 
