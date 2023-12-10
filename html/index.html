@@ -1,93 +1,117 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>2チャンネル風アプリ</title>
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
+
 <body>
-<div id="chatContainer">
+    <div id="chatContainer">
 
-  <!--  スレ表示スペース-->
-  <div id="thread">
+        <!--  スレ表示スペース-->
+        <div id="thread">
 
-  </div>
-  <!--  /スレ表示スペース-->
+        </div>
+        <!--  /スレ表示スペース-->
 
-  <!-- 書き込みスペース -->
- 
+        <!-- 書き込みスペース -->
+
         <div>
-            ID:<input type="text" id="uname" >
+            ID:<input type="text" id="uname">
         </div>
         <div>
             <textarea name="" id="text" cols="30" rows="10"></textarea>
             <button id="send">投稿</button>
 
         </div>
-     
 
-</div>
-  
-    
+
+    </div>
+
+
 
 
     <!-- /書き込みスペース -->
 
 
 
-     <!-- JQuery -->
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-     <!-- JQuery -->
-  <!--** 以下Firebase **-->
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- JQuery -->
+    <!--** 以下Firebase **-->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
             from "https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-database.js";
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzhO1o3mtaNpAYb56dbJaRJPIJ-Bx4O4E",
-      authDomain: "chat-trial-7029f.firebaseapp.com",
-      projectId: "chat-trial-7029f",
-      storageBucket: "chat-trial-7029f.appspot.com",
-      messagingSenderId: "265048633140",
-      appId: "1:265048633140:web:af568eeb81ba35149e3f61"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzhO1o3mtaNpAYb56dbJaRJPIJ-Bx4O4E",
+            authDomain: "chat-trial-7029f.firebaseapp.com",
+            projectId: "chat-trial-7029f",
+            storageBucket: "chat-trial-7029f.appspot.com",
+            messagingSenderId: "265048633140",
+            appId: "1:265048633140:web:af568eeb81ba35149e3f61"
+        };
 
- // ユーザーIDの新規取得
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
 
- // ユーザーIDのローカルストレージへの保存
+        // ユーザーIDの新規取得
 
- // ユーザーIDの再読み込み
+        // ユーザーIDのローカルストレージへの保存
 
- // データベースの参照を作成
+        // ユーザーIDの再読み込み
+
+        // データベースの参照を作成
         // RealtimeDBに接続
         const db = getDatabase(app);
         // RealtimeDB内の"chat"を使う
         const dbRef = ref(db, "chat");
-        $("#send").on("click", function () {
+        $("#send").on("click", function (e) {
             const msg = {
                 uname: $("#uname").val(),
-                text: $("#text").val()
-
+                text: $("#text").val(),
+                userId: getOrGenerateUserId() // ユーザーIDを取得または生成
             };
             const newPostRef = push(dbRef);
             // pushできる状態にする
             set(newPostRef, msg);
             // DBに値を送信
-
+            // ユーザーIDの新規取得
         });
+        // ランダムなID生成関数
+        function generateRandomId() {
+            return Math.random().toString(36).substring(2, 10);
+        }
+
+        // getOrGenerateUserId 関数の追加
+        function getOrGenerateUserId() {
+            let userId = localStorage.getItem("userId");
+            if (!userId) {
+                userId = generateRandomId();
+                localStorage.setItem("userId", userId);
+            }
+            return userId;
+        }
+
+        let messageCount = 0; // 投稿されたメッセージの数を保持する変数
         onChildAdded(dbRef, function (data) {
             const msg = data.val();
             const key = data.key;
+            var timestamp = new Date().toLocaleString();
             let h = "<p>";
+            h += ++messageCount + ": "; // メッセージ数に応じて番号を追加
             h += msg.uname;
+            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h += timestamp;
+            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h += "ユーザーID: " + msg.userId; // msgオブジェクトのuserIdを使用
             h += "<br>";
             h += msg.text;
             h += "</p>";
@@ -96,8 +120,9 @@
 
 
 
-  </script>
+    </script>
 
 
 </body>
+
 </html>

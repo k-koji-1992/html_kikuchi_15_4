@@ -1,3 +1,8 @@
+body{
+
+    font-family: 'Arial', sans-serif;
+}
+
 #chatContainer {
     display: center;
     flex-direction: column;
