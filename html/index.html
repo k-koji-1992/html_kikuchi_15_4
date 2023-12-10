@@ -13,31 +13,13 @@
             padding: 0;
         }
 
-        #chatContainer {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        #thread {
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-
-        #thread p {
-            margin: 0;
+        #response {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             padding: 10px;
             background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        #uname {
-            padding: 10px;
+            border-top: 1px solid #ccc;
             width: 100%;
             box-sizing: border-box;
         }
@@ -46,6 +28,14 @@
             width: 100%;
             box-sizing: border-box;
             margin-bottom: 10px;
+        }
+
+        #thread {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 70px;
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
         }
 
         #send {
@@ -59,31 +49,26 @@
         #send:hover {
             background-color: #0056b3;
         }
+
+        #chatContainer {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
     </style>
 
 </head>
 
 <body>
     <div id="chatContainer">
-
-        <!--  スレ表示スペース-->
-        <div id="thread">
-
-        </div>
-        <!--  /スレ表示スペース-->
-
-        <!-- 書き込みスペース -->
-
-        <div>
+        <div id="thread"></div>
+        <div id="response">
             <input type="text" id="uname" placeholder="名前を書き込んでください">
-        </div>
-        <div>
             <textarea name="" id="text" cols="30" rows="10" placeholder="投稿を書き込んでください"></textarea>
             <button id="send">投稿</button>
-
         </div>
-
-
     </div>
 
 
@@ -138,7 +123,12 @@
             // pushできる状態にする
             set(newPostRef, msg);
             // DBに値を送信
-            // ユーザーIDの新規取得
+
+            
+            $("#text").val('');
+            // テキストボックス内のテキストをクリア
+            $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+            // スクロールを一番下に移動
         });
         // ランダムなID生成関数
         function generateRandomId() {
@@ -171,6 +161,7 @@
             h += msg.text;
             h += "</p>";
             $("#thread").append(h); // #output の最後に追加
+            memo.value = '';
         });
 
 
