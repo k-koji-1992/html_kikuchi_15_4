@@ -74,7 +74,7 @@
         </div>
     </div>
 
-   
+
 
 
     <!-- /書き込みスペース -->
@@ -159,11 +159,12 @@
             h += "ユーザーID: " + msg.userId; // msgオブジェクトのuserIdを使用
             h += "<br>";
             h +='<span contentEditable="true" id="'+key+'_update">'+msg.text+'</span>';
-            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h += "<br>"
             h +='<button class="remove" data-key="'+key+'">削除</button>';
             h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
             h +='<button class="update" data-key="'+key+'">アップデート</button>';
-            h +='<button class="reply" data-key="'+key+'""}">リプライ</button>'
+            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h +='<button class="reply" data-key="'+key+'""}">リプライ</button>';
             h += "</p>";
             $("#thread").append(h); // #output の最後に追加
             memo.value = '';
@@ -197,7 +198,7 @@
 
             });
             
-      
+    
 
     </script>
 
