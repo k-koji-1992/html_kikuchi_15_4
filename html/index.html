@@ -56,6 +56,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
+
     </style>
 
 </head>
@@ -73,7 +74,7 @@
         </div>
     </div>
 
-
+   
 
 
     <!-- /書き込みスペース -->
@@ -89,7 +90,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
-        import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+        import { getDatabase, ref, push, set, update,onChildAdded, remove, onChildRemoved,onChildChanged}
             from "https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-database.js";
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -110,8 +111,9 @@
         // RealtimeDB内の"chat"を使う
         const dbRef = ref(db, "chat");
         $("#send").on("click", function () {
+            const uname=$("#uname").val()||"ななしのプログラマー";
             const msg = {
-                uname: $("#uname").val(),
+                uname: uname,
                 text: $("#text").val(),
                 userId: getOrGenerateUserId() // ユーザーIDを取得または生成
             };
@@ -146,8 +148,9 @@
         onChildAdded(dbRef, function (data) {
             const msg = data.val();
             const key = data.key;
+            // 削除・更新に必須
             var timestamp = new Date().toLocaleString();
-            let h = "<p>";
+            let h = '<p id="'+key+'">';
             h += ++messageCount + ": "; // メッセージ数に応じて番号を追加
             h += msg.uname;
             h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
@@ -155,13 +158,46 @@
             h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
             h += "ユーザーID: " + msg.userId; // msgオブジェクトのuserIdを使用
             h += "<br>";
-            h += msg.text;
+            h +='<span contentEditable="true" id="'+key+'_update">'+msg.text+'</span>';
+            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h +='<button class="remove" data-key="'+key+'">削除</button>';
+            h += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; // スペースを挿入
+            h +='<button class="update" data-key="'+key+'">アップデート</button>';
+            h +='<button class="reply" data-key="'+key+'""}">リプライ</button>'
             h += "</p>";
             $("#thread").append(h); // #output の最後に追加
             memo.value = '';
         });
 
+            // 削除イベント
+            $("#thread").on("click",".remove",function(){
+                    const key=$(this).attr("data-key")
+                    const remove_item= ref(db,"chat/"+key);
+                    remove(remove_item);
+                    // Firebaseデータ削除関数
+            });
 
+            // 更新イベント
+            $("#thread").on("click",".update",function(){
+                 const key = $(this).attr("data-key")
+                 update(ref(db,"chat/"+key),{
+                        text:$("#"+key+'_update').text(),
+            
+                 });
+
+
+            });
+            onChildRemoved(dbRef,(data)=>{
+            $("#"+data.key).remove();
+            // DOM操作関数
+            });
+            // 更新処理がFirebase側で実行されたらイベント発生
+            onChildChanged(dbRef,(data)=>{
+                $("#"+data.key+'_update').fadeOut(800).fadeIn(800);
+
+            });
+            
+      
 
     </script>
 
