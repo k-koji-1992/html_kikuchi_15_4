@@ -9,18 +9,16 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
-            margin: 0;
-            padding: 0;
+            margin:0 auto
         }
 
         #response {
-            position: fixed;
+           
             bottom: 0;
             left: 0;
             padding: 10px;
             background-color: #fff;
             border-top: 1px solid #ccc;
-            width: 100%;
             box-sizing: border-box;
         }
 
@@ -32,10 +30,11 @@
 
         #thread {
             border-bottom: 1px solid #ccc;
+            border: 1px solid #ccc;
             padding-bottom: 20px;
             margin-bottom: 70px;
-            overflow-y: auto;
-            max-height: calc(100vh - 150px);
+            overflow-y: scroll;
+            height: 35vh
         }
 
         #send {
@@ -63,6 +62,9 @@
 
 <body>
     <div id="chatContainer">
+        <div>
+            <h3> G's academyについて語るスレ　Part1</h3>
+        </div>
         <div id="thread"></div>
         <div id="response">
             <input type="text" id="uname" placeholder="名前を書き込んでください">
@@ -102,18 +104,12 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
 
-        // ユーザーIDの新規取得
-
-        // ユーザーIDのローカルストレージへの保存
-
-        // ユーザーIDの再読み込み
-
         // データベースの参照を作成
         // RealtimeDBに接続
         const db = getDatabase(app);
         // RealtimeDB内の"chat"を使う
         const dbRef = ref(db, "chat");
-        $("#send").on("click", function (e) {
+        $("#send").on("click", function () {
             const msg = {
                 uname: $("#uname").val(),
                 text: $("#text").val(),
@@ -129,6 +125,7 @@
             // テキストボックス内のテキストをクリア
             $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
             // スクロールを一番下に移動
+        
         });
         // ランダムなID生成関数
         function generateRandomId() {
